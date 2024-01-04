@@ -1,0 +1,19 @@
+const db = require("../database/database");
+
+exports.getAllFilms = async function (req, res) {
+    req, res; {
+        try {
+            console.log("lancement de la requête d'affichage");
+            const rows = await db.pool.query("SELECT * FROM film");
+            console.log(rows);
+            res.status(rows).json(rows);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+    exports.getFilmsbyId = async function (req, res) {
+    };
+}

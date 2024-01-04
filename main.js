@@ -1,68 +1,18 @@
 const express = require("express");
-const router = express.Router();
-const db = require("./db");
+const app = express();
+const db = require("./database/database");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const filmRoutes = require("./routes/filmRoute");
+const userRoutes = require("./routes/userRoute");
+app.use(cors())
 
-router.get("/utilisateurs", (req, res) => {
-  db.query("SELECT * FROM utilisateur", (err, results) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+app.use('/api/films', filmRoute);
+app.use('/api/users', userRoute);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    res.json(results);
-  });
-});
+app.use("/users", require("./routes/users.routes"));
 
-router.post("/utilisateurs", (req, res) => {
-  const utilisateur = {
-    nom: req.body.nom,
-    prenom: req.body.prenom,
-    email: req.body.email,
-  };
 
-  db.query(
-    "INSERT INTO utilisateur (nom, prenom, email) VALUES (?, ?, ?)",
-    [utilisateur.nom, utilisateur.prenom, utilisateur.email],
-    (err, results) => {
-      if (err) {
-        res.status(500).send(err);
-      }
-
-      res.status(201).send(results.insertId);
-    }
-  );
-});
-
-router.put("/utilisateurs/:id", (req, res) => {
-  const id = req.params.id;
-  const utilisateur = {
-    nom: req.body.nom,
-    prenom: req.body.prenom,
-    email: req.body.email,
-  };
-
-  db.query(
-    "UPDATE utilisateur SET nom = ?, prenom = ?, email = ? WHERE id = ?",
-    [utilisateur.nom, utilisateur.prenom, utilisateur.email, id],
-    (err, results) => {
-      if (err) {
-        res.status(500).send(err);
-      }
-
-      res.status(200).send(results.affectedRows);
-    }
-  );
-});
-
-router.delete("/utilisateurs/:id", (req, res) => {
-  const id = req.params.id;
-
-  db.query("DELETE FROM utilisateur WHERE id = ?", [id], (err, results) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-
-    res.status(200).send(results.affectedRows);
-  });
-});
-
-module.exports = router;
+app.listen(3000, () => console.log("Serveur ouvert port: 3000")   );
